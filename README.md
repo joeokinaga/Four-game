@@ -1,29 +1,35 @@
 # FourGame
 
-2人対戦のボードゲームです。グリッド上のタイルをクリックしてスコアを競います。Java Swing で作られたデスクトップアプリです。
+2人対戦型のボードゲーム。n×n マスのボードでフィールドの値を4にした数を競う Java Swing アプリ。
 
 ## ゲームルール
 
-- プレイヤーは RED と BLUE の2人で交互にタイルをクリックします
-- クリックしたタイル＋上下左右の隣接タイルの値が1ずつ増加します
-- タイルの値が **4** に達すると、そのタイルはクリックしたプレイヤーの色になります
-- すべてのタイルが値4になったらゲーム終了
-- 色付きタイルが多いプレイヤーの勝ちです
+- ボードは n×n マスで構成され、各マスの初期値は 0
+- プレイヤーは交互にマスを選択する（赤・青の2人）
+- 選択したマスとその上下左右の隣接マスの値が +1 される（最大値は 4）
+- 値が 4 になったマスは、そのとき操作したプレイヤーの色に染まる
+- **スコア** = 自分が値を 4 にしたマスの数
+- 全マスの値が 4 になった時点でゲーム終了、スコアが高い方の勝ち
+- 引き分けあり（同点の場合）
 
-## 使用技術
+## 技術スタック
 
-- **言語:** Java
-- **GUI:** Java Swing
-- **IDE:** NetBeans / IntelliJ IDEA
+| カテゴリ | 内容 |
+|----------|------|
+| 言語 | Java 21 |
+| GUI フレームワーク | Java Swing |
+| ビルドツール | Apache Ant (`build.xml`) |
+| IDE | NetBeans |
 
-## セットアップ
+## 動作環境
 
-### 前提条件
+- Java 21 以上（Java SE）
+- NetBeans IDE 推奨（`nbproject/` が含まれるため）
+- OS: Windows / macOS / Linux（Swing が動く環境ならOK）
 
-- Java 8 以上
-- NetBeans IDE（推奨）または IntelliJ IDEA
+## 起動方法
 
-### NetBeans で開く場合
+### NetBeans の場合
 
 1. リポジトリをクローン
 
@@ -31,32 +37,49 @@
    git clone https://github.com/joeokinaga/Four-game.git
    ```
 
-2. NetBeans を起動 → `File` → `Open Project` → クローンしたフォルダを選択
+2. `File > Open Project` でクローンしたフォルダを開く
 
-3. `Run Project`（F6）で起動
+3. `Run > Run Project`（F6）を押す
 
-### コマンドラインで実行する場合
+### コマンドラインの場合
 
 ```bash
-cd Four-game/src
-javac *.java
-java FourGameGUI
+javac -d out src/fourgame/*.java
+java -cp out fourgame.FourGame
 ```
 
-## ディレクトリ構成
+## 操作方法
+
+1. 起動後、ボードサイズ（3×3 / 4×4 / 5×5）を選択する
+2. 赤プレイヤーから開始 — クリックしたいマスを選ぶ
+3. 交互にプレイ。全マスが埋まると勝者がダイアログで表示される
+4. ダイアログを閉じると自動的に新しいゲームが始まる
+
+## ファイル構成
 
 ```
-FourGame/
-├── src/
-│   ├── FourGameGUI.java   # メインウィンドウ（エントリポイント）
-│   ├── PlayGame.java      # ゲームロジック・スコア管理
-│   ├── GameBoard.java     # ボード状態・タイル更新
-│   └── Tile.java          # タイル1マスの状態
-├── build/                 # コンパイル済みクラス（自動生成）
-├── build.xml              # Antビルドファイル
-└── manifest.mf
+src/fourgame/
+├── FourGame.java   # エントリーポイント（main）
+├── Game.java       # ゲームロジック（盤面・スコア・勝敗判定）
+├── Player.java     # プレイヤーEnum（RED / BLUE / NONE）
+├── MainWindow.java # メインウィンドウ（ボードサイズ選択）
+├── Window.java     # ゲームウィンドウ
+└── BaseWindow.java # 共通ウィンドウ処理
 ```
+
+## 実装のポイント
+
+- **盤面とロジックの分離**: `Game.java` はGUIに依存せず、盤面状態・スコア・勝敗判定をすべて管理
+- **隣接マス処理**: 上下左右（斜め除く）の4方向を `incrementNeighbors()` で処理
+- **プレイヤー切り替え**: `switchPlayer()` で RED ↔ BLUE を交互に管理
+- **終了判定**: `isGameOver()` で全マスが4になったか毎ターン後にチェック
+
+## 注意事項
+
+- 3×3 / 4×4 / 5×5 のみ対応（任意サイズ変更は未対応）
+- CPUプレイヤー（AI）は非搭載、2人が同じ画面でプレイする形式
+- ウィンドウのリサイズには対応していない
 
 ## ライセンス
 
-[MIT](LICENSE)
+This project was created as a university assignment.
